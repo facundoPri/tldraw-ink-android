@@ -32,7 +32,7 @@ This is an independent companion project, not an official tldraw product. It is 
 
 ## Downloads and release status
 
-**[Download Ink Share 0.3.0 — development APK](https://github.com/facundoPri/tldraw-ink-android/releases/download/v0.3.0/ink-share-0.3.0-dev.apk)** · [Release notes and checksums](https://github.com/facundoPri/tldraw-ink-android/releases/tag/v0.3.0)
+**[Download Ink Share 0.3.1 — development APK](https://github.com/facundoPri/tldraw-ink-android/releases/download/v0.3.1/ink-share-0.3.1-dev.apk)** · [Release notes and checksums](https://github.com/facundoPri/tldraw-ink-android/releases/tag/v0.3.1)
 
 This is an experimental **development prerelease** for testing. It uses the SDK's development mode, contains no tldraw license key, and is signed with the development certificate. Android/WebView debugging is enabled. Download the `.apk` asset and open it on your Android device; allow installation from that download source if Android prompts you.
 
@@ -46,11 +46,11 @@ Requirements: Android 10 or later, a compatible stylus for native pen input, and
 
 1. Open the board on your desktop and enable **Share**.
 2. Copy the entire Share invitation, including the fragment after `#`.
-3. Open **Ink Share** on Android. Paste the invitation and tap **Abrir board**.
+3. Open **Ink Share** on Android. Paste the invitation and tap **Open board**.
 4. Choose the draw tool and start writing. Selection, shapes, and navigation use tldraw's controls.
 5. Use **Boards** to switch connections, and the people icon to see participants in the current board.
 
-The custom connection interface currently uses Spanish. The S Pen button routes eraser input while the draw tool is active.
+The connection interface and editor start in English. The S Pen button routes eraser input while the draw tool is active.
 
 **Keep the app open while reconnecting.** Pending edits are retained during an in-process network interruption; they do not yet survive a force-stop, process death, or reboot.
 

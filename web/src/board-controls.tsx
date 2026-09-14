@@ -12,8 +12,8 @@ function BoardControls() {
  const peers = useValue('connected collaborators', () => editor.getCollaborators(), [editor])
  return <div className="board-controls" data-ink-block="true">
   <strong title={name}>{name}</strong>
-  <span className={`connection-status ${status === 'Conectado' ? 'online' : ''}`} role="status" title={status}><i/>{status === 'Conectado' ? 'Conectado' : status}</span>
-  <details className="people-menu"><summary aria-label="Ver participantes" title="Participantes"><UiIcon name="people"/><span>{peers.length + 1}</span></summary><div className="participants"><b>En este board · {peers.length + 1}</b><p>Vos · tablet</p>{peers.map(peer => <button key={peer.id} onClick={() => editor.zoomToUser(peer.userId)}><i style={{background: peer.color}}/>{peer.userName?.trim() || 'Sin nombre'}</button>)}{!peers.length && <small>No hay otros participantes con presencia disponible.</small>}</div></details>
+  <span className={`connection-status ${status === 'Connected' ? 'online' : ''}`} role="status" title={status}><i/>{status === 'Connected' ? 'Connected' : status}</span>
+  <details className="people-menu"><summary aria-label="View participants" title="Participants"><UiIcon name="people"/><span>{peers.length + 1}</span></summary><div className="participants"><b>On this board · {peers.length + 1}</b><p>You · tablet</p>{peers.map(peer => <button key={peer.id} onClick={() => editor.zoomToUser(peer.userId)}><i style={{background: peer.color}}/>{peer.userName?.trim() || 'Unnamed'}</button>)}{!peers.length && <small>No other participants are currently visible.</small>}</div></details>
   <button className="boards-button" aria-label="Boards" onClick={openBoards}><UiIcon name="boards"/><span>Boards</span></button>
  </div>
 }

@@ -9,7 +9,7 @@ import './style.css'
 
 function populate(editor: Editor) {
  window.editor = editor
- editor.user.updateUserPreferences({colorScheme: 'light'})
+ editor.user.updateUserPreferences({colorScheme: 'light', locale: 'en'})
  editor.createShapes([
   {type:'text',x:150,y:150,props:{richText:toRichText('A little room to think.'),font:'draw',size:'xl',color:'black'}},
   {type:'text',x:153,y:215,props:{richText:toRichText('Sketch on your tablet. Keep going on your desktop.'),font:'sans',size:'s',color:'grey'}},
@@ -22,7 +22,7 @@ function populate(editor: Editor) {
  editor.setCamera({x:0,y:0,z:1})
 }
 createRoot(document.getElementById('root')!).render(
- <BoardContext.Provider value={{name:'A fresh page',status:'Demo local',openBoards:()=>location.assign('/')}}>
+ <BoardContext.Provider value={{name:'A fresh page',status:'Local demo',openBoards:()=>location.assign('/')}}>
   <main className="canvas"><Tldraw assetUrls={getAssetUrlsByImport()} components={boardComponents} onMount={populate}/></main>
  </BoardContext.Provider>
 )

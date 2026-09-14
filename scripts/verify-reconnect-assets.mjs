@@ -14,12 +14,12 @@ async function wait(fn,msg){for(let i=0;i<100;i++){if(await fn()){checks.push(ms
 try {
  await cdp.send('Network.enable')
  await cdp.send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0})
- await wait(async()=>(await page.locator('[role=status]').innerText()).includes('Reconectando'),'Interrupción de red detectada')
+ await wait(async()=>(await page.locator('[role=status]').innerText()).includes('Reconnecting'),'Network interruption detected')
  await page.evaluate(id=>{window.editor.createShape({id,type:'geo',x:20000,y:20000,props:{w:50,h:50}})},id)
  await new Promise(r=>setTimeout(r,500))
  assert.equal(await desktop(`return !!editor.getShape(${JSON.stringify(id)})`),false)
  await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1})
- await wait(()=>desktop(`return !!editor.getShape(${JSON.stringify(id)})`),'Edición pendiente llega al reconectar')
+ await wait(()=>desktop(`return !!editor.getShape(${JSON.stringify(id)})`),'Pending edit delivered after reconnection')
  const uploaded=await page.evaluate(async({assetId,imageId})=>{
   const canvas=document.createElement('canvas');canvas.width=32;canvas.height=32;const ctx=canvas.getContext('2d');ctx.fillStyle='#245f45';ctx.fillRect(0,0,32,32);ctx.fillStyle='#ffffff';ctx.fillRect(8,8,16,16)
   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));const file=new File([blob],'sync-probe.png',{type:'image/png'})
@@ -29,12 +29,12 @@ try {
   const url=await window.editor.resolveAssetUrl(assetId,{screenScale:1});const r=await fetch(url)
   return {src:result.src,status:r.status,bytes:(await r.arrayBuffer()).byteLength}
  },{assetId,imageId})
- assert(uploaded.src.startsWith('asset:'));assert.equal(uploaded.status,200);assert(uploaded.bytes>0);checks.push('PNG subido y descargado por API assets del Share')
- await wait(()=>desktop(`return editor.getShape(${JSON.stringify(imageId)})?.props.assetId===${JSON.stringify(assetId)}`),'Imagen Android recibida por Mac')
- const resolved=await desktop(`const src=await editor.resolveAssetUrl(${JSON.stringify(assetId)},{screenScale:1});return typeof src === 'string' && src.length > 0`);assert(resolved);checks.push('Mac resuelve el asset compartido')
+ assert(uploaded.src.startsWith('asset:'));assert.equal(uploaded.status,200);assert(uploaded.bytes>0);checks.push('PNG uploaded and downloaded through the Share asset API')
+ await wait(()=>desktop(`return editor.getShape(${JSON.stringify(imageId)})?.props.assetId===${JSON.stringify(assetId)}`),'Android image received on Mac')
+ const resolved=await desktop(`const src=await editor.resolveAssetUrl(${JSON.stringify(assetId)},{screenScale:1});return typeof src === 'string' && src.length > 0`);assert(resolved);checks.push('Mac resolves the shared asset')
  const remoteId=`shape:mac-asset-probe-${Date.now()}`
  await desktop(`editor.createShape({id:${JSON.stringify(remoteId)},type:'image',x:20300,y:20000,props:{assetId:${JSON.stringify(assetId)},w:64,h:64}});return true`)
- try {await wait(()=>page.evaluate(id=>!!window.editor.getShape(id),remoteId),'Imagen creada en Mac recibida por Android')}finally{await desktop(`editor.deleteShapes([${JSON.stringify(remoteId)}]);return true`)}
+ try {await wait(()=>page.evaluate(id=>!!window.editor.getShape(id),remoteId),'Image created on Mac received on Android')}finally{await desktop(`editor.deleteShapes([${JSON.stringify(remoteId)}]);return true`)}
 } finally {
  await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1})
  await desktop(`editor.deleteShapes(${JSON.stringify([id,imageId])});editor.deleteAssets([${JSON.stringify(assetId)}]);return true`)

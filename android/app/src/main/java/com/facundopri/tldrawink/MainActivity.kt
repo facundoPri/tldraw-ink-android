@@ -168,7 +168,7 @@ private class HybridCanvas(
                         }
                         JSONObject().put("id", requestId).put("result", result)
                     } catch (_: Exception) {
-                        JSONObject().put("id", requestId).put("error", "No se pudo acceder al historial local.")
+                        JSONObject().put("id", requestId).put("error", "Could not access local history.")
                     }
                     reply.postMessage(response.toString())
                 }

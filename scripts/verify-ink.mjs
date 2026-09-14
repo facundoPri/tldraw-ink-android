@@ -18,9 +18,9 @@ try {
  const [left,top,right,bottom]=match.slice(1).map(Number);const x=Math.round((left+right)/2), y=Math.round((top+bottom)/2)
  execFileSync('adb',[...adbArgs,'shell','input','stylus','swipe',String(x),String(y),String(x+220),String(y+90),'650'])
  for(let i=0;i<40;i++){created=await page.evaluate(ids=>window.editor.getCurrentPageShapes().filter(s=>s.id.startsWith('shape:ink-')&&!ids.includes(s.id)),state.ids);if(created.length)break;await new Promise(r=>setTimeout(r,100))}
- assert.equal(created.length,1,'El gesto stylus debe producir una sola figura Ink')
- assert.equal(created[0].type,'draw');assert(created[0].props.isPen);checks.push('MotionEvent stylus → Jetpack Ink → una figura draw')
- const remote=await desktop(`return editor.getShape(${JSON.stringify(created[0].id)})`);assert(remote);assert.equal(remote.props.segments[0].path,created[0].props.segments[0].path);checks.push('Trazo nativo sincronizado en Mac')
+ assert.equal(created.length,1,'The stylus gesture must produce exactly one Ink shape')
+ assert.equal(created[0].type,'draw');assert(created[0].props.isPen);checks.push('MotionEvent stylus → Jetpack Ink → one draw shape')
+ const remote=await desktop(`return editor.getShape(${JSON.stringify(created[0].id)})`);assert(remote);assert.equal(remote.props.segments[0].path,created[0].props.segments[0].path);checks.push('Native stroke synced to Mac')
  await page.screenshot({path:'artifacts/ink-native.png'})
  console.log(checks)
 } finally {

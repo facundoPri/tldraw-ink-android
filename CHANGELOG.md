@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 — 2026-09-13
+
+- Translate all app-owned interface text, accessibility labels, errors, and verification messages to English.
+- Start the tldraw editor in English regardless of the device language or a previously saved locale.
+- Update the README and regenerate documentation screenshots in English.
+
 ## 0.3.0 — 2026-09-13
 
 - Introduce the Ink Share launcher name and adaptive pen-and-stroke icon, including a monochrome themed icon.

@@ -1,8 +1,16 @@
 # Releasing Ink Share
 
-## Current blocker
+## Development prerelease
 
-The 0.3.0 production APK is pending a tldraw SDK license. Publishing source does not grant SDK production rights. Do not relabel the development-mode APK as a production build.
+Version 0.3.0 is published as a GitHub prerelease with `ink-share-0.3.0-dev.apk`, `SHA256SUMS`, and `build-info.json`. It is the debug APK built from the tagged main commit, with the SDK in development mode and no SDK key. Android/WebView debugging is enabled. The artifact is for development testing; its prerelease label does not change the SDK license terms.
+
+To reproduce it, check out the release tag, install the locked web dependencies with `npm ci --prefix web`, and run `./scripts/build.sh debug`. The output is `android/app/build/outputs/apk/debug/app-debug.apk`. A locally generated debug certificate will differ from the published artifact's certificate; Android will not accept it as an update to that installation unless the signing identity matches.
+
+For later development prereleases, increment the Android and web versions, push the source to main, build the debug APK, verify its signature, and attach it with a SHA-256 checksum and source commit metadata. Mark the GitHub release as a prerelease and identify the build as development mode in its name and notes. Keep signing keys private.
+
+## Production release requirement
+
+A production APK is pending a tldraw SDK license. Publishing source or a development artifact does not grant SDK production rights. Do not relabel the development-mode APK as a production build.
 
 Request a suitable license through [tldraw](https://tldraw.dev/community/license). The packaged editor uses `https://appassets.androidplatform.net`; ensure the license covers this Android/WebView distribution and origin. The key is passed to `<Tldraw licenseKey={...}>` at build time. SDK attribution is preserved.
 
@@ -54,6 +62,6 @@ It does not publish automatically. Install and smoke-test the signed APK, includ
 
 ## Publish the release
 
-A 0.3.0 draft can remain pending until licensing and device checks are complete. Attach the APK, checksum, and build metadata to that draft. Confirm its target is the tested main commit, replace the pending-license notes with the final changelog, and publish it through GitHub Releases. For a later version, create a new release targeting its tested main commit.
+Once licensing and device checks are complete, create a new production release targeting its tested main commit. Attach the signed production APK, checksum, and build metadata. Keep the existing development prerelease labeled as such rather than replacing its APK with a different signing identity.
 
 Once published, the repository's Releases page provides the APK download. Retain the APK, checksum, source commit, and signing-key backup for each release.

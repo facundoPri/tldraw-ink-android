@@ -6,7 +6,8 @@
 - Match added board controls to tldraw's neutral surfaces, blue accent, compact typography, and light/dark themes.
 - Refine the Boards dialog and recent-connection rows, with accessible compact toolbar buttons.
 - Add public build instructions, a local design sandbox, sample screenshots, and explicit test-board configuration.
-- Prepare production license injection and external release signing. Public APK distribution is pending an appropriate tldraw license.
+- Publish a downloadable development APK as a testing prerelease, with checksum and source commit metadata.
+- Prepare production license injection and external release signing. Production distribution remains pending an appropriate tldraw license.
 
 ## 0.2.2 — 2026-09-12
 

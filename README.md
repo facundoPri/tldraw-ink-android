@@ -32,11 +32,13 @@ This is an independent companion project, not an official tldraw product. It is 
 
 ## Downloads and release status
 
-**Version 0.3.0 is currently a development build. A public production APK is pending a tldraw SDK license.**
+**[Download Ink Share 0.3.0 — development APK](https://github.com/facundoPri/tldraw-ink-android/releases/download/v0.3.0/ink-share-0.3.0-dev.apk)** · [Release notes and checksums](https://github.com/facundoPri/tldraw-ink-android/releases/tag/v0.3.0)
 
-The source and build instructions are available here. Production builds require a valid license for this app; the desktop application's license is not reused. The release procedure builds a signed APK with a checksum, ready to attach to [GitHub Releases](https://github.com/facundoPri/tldraw-ink-android/releases). See [release instructions](docs/RELEASING.md).
+This is an experimental **development prerelease** for testing. It uses the SDK's development mode, contains no tldraw license key, and is signed with the development certificate. Android/WebView debugging is enabled. Download the `.apk` asset and open it on your Android device; allow installation from that download source if Android prompts you.
 
-The [tldraw license documentation](https://tldraw.dev/community/license) describes trial, commercial, and discretionary non-commercial hobby licenses. The SDK keeps its own license regardless of this repository's source license.
+A production build remains pending a suitable tldraw SDK license and production signing. The [tldraw license documentation](https://tldraw.dev/community/license) distinguishes development use from production use, including non-commercial projects. A prerelease label does not grant additional SDK rights. SDK notices and checks are unchanged, and the desktop application's license is not reused.
+
+See [release instructions](docs/RELEASING.md) for the development artifact and the separate production process.
 
 ## Getting started
 

@@ -16,6 +16,8 @@ This is an independent companion project, not an official tldraw product. It is 
 
 ## What it does
 
+- **Handwriting to text.** Tap **Write text**, write with your S Pen, and convert English or Spanish handwriting into editable text. Review it before inserting it into the canvas.
+
 - **Pressure-aware pen preview.** Native Ink rendering follows stylus pressure while you write; completed strokes become editable tldraw `draw` shapes.
 - **Smoother handoff.** Additional samples help reduce the change in small letters and curves when the native preview becomes the final stroke.
 - **One canvas toolbar.** Board title, connection state, participants, and Boards sit inside tldraw's top controls. Neutral surfaces and blue accents follow the editor's light and dark themes.
@@ -32,7 +34,7 @@ This is an independent companion project, not an official tldraw product. It is 
 
 ## Downloads and release status
 
-**[Download Ink Share 0.3.1 — development APK](https://github.com/facundoPri/tldraw-ink-android/releases/download/v0.3.1/ink-share-0.3.1-dev.apk)** · [Release notes and checksums](https://github.com/facundoPri/tldraw-ink-android/releases/tag/v0.3.1)
+**[Download Ink Share 0.4.0 — development APK](https://github.com/facundoPri/tldraw-ink-android/releases/download/v0.4.0/ink-share-0.4.0-dev.apk)** · [Release notes and checksums](https://github.com/facundoPri/tldraw-ink-android/releases/tag/v0.4.0)
 
 This is an experimental **development prerelease** for testing. It uses the SDK's development mode, contains no tldraw license key, and is signed with the development certificate. Android/WebView debugging is enabled. Download the `.apk` asset and open it on your Android device; allow installation from that download source if Android prompts you.
 
@@ -53,6 +55,24 @@ Requirements: Android 10 or later, a compatible stylus for native pen input, and
 The connection interface and editor start in English. The S Pen button routes eraser input while the draw tool is active.
 
 **Keep the app open while reconnecting.** Pending edits are retained during an in-process network interruption; they do not yet survive a force-stop, process death, or reboot.
+
+## Write with your pen, save as text
+
+1. Connect to a board and tap **Write text** in the top controls.
+2. Choose **English** or **Spanish** and write one line in the handwriting area with your S Pen.
+3. Tap **Convert**. The first conversion downloads the selected language model (about 20 MB); later recognition can work offline.
+4. Review the recognized text below. You can correct it with the keyboard, or write and convert another line to append it.
+5. Tap **Insert** to add an editable text shape at the center of the current view. Move or resize it with tldraw's selection tool; Undo removes the insertion.
+
+**Undo stroke** removes the last pen stroke; **Clear ink** clears only the handwriting area. Convert or clear any remaining ink before inserting. Cancel closes the dialog without adding a shape. Finger/palm contacts do not add ink to the recognition area.
+
+Recognition uses Google's on-device ML Kit Digital Ink model, not an image upload. Model downloads require Internet access. This is separate from Samsung's keyboard handwriting setting: it works even when that feature is disabled. The review field also accepts native keyboard/S Pen text input when your keyboard supports and enables it. Recognition language does not change the English app interface.
+
+To convert existing handwriting, choose **Lasso text** in the bottom toolbar and draw a loop around complete strokes. Recognition uses the selected language. Review the result and tap **Replace ink**; cancel preserves the originals, and Undo restores them after conversion. Locked shapes and imported images are not converted. If the selected strokes change during recognition, replacement is canceled. Review names and punctuation before saving.
+
+Use **Pen** or **Touch** above the bottom toolbar to choose which input you are configuring, then select a tool. For example, assign Draw to Pen and Select, Rectangle, or Eraser to Touch. Assignments apply to the current editor session. The pen can draw while finger gestures use the other tool; simultaneous independent gestures are not supported.
+
+The pressure drawing style uses a pressure-sensitive native preview. Solid uses constant width in both preview and final ink. Dashed and dotted styles use tldraw’s own preview to keep the pattern consistent.
 
 ## Development
 

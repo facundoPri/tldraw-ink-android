@@ -6,8 +6,8 @@ android {
   applicationId = "com.facundopri.tldrawink"
   minSdk = 29
   targetSdk = 37
-  versionCode = 6
-  versionName = "0.3.1"
+  versionCode = 7
+  versionName = "0.4.0"
   testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
  }
  val releaseStore = System.getenv("SIGNING_STORE_FILE")
@@ -30,6 +30,7 @@ android {
  compileOptions { sourceCompatibility = JavaVersion.VERSION_21; targetCompatibility = JavaVersion.VERSION_21 }
 }
 dependencies {
+ implementation("com.google.mlkit:digital-ink-recognition:19.0.0")
  androidTestImplementation("androidx.test:runner:1.7.0")
  androidTestImplementation("androidx.test.ext:junit:1.3.0")
  implementation("androidx.core:core-ktx:1.19.0")

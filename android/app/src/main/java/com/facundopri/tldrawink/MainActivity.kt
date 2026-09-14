@@ -107,6 +107,7 @@ private class HybridCanvas(
     private val activity: Activity,
 ) : FrameLayout(activity) {
     private val webView = WebView(activity)
+    private var handwritingDialog: HandwritingDialog? = null
     private val inkOverlay = StylusInkOverlay(activity, ::commitStroke, ::forwardEraserEvent)
     private val pendingEraserEvents = ArrayDeque<MotionEvent>()
     private var eraserActivation = 0
@@ -154,6 +155,23 @@ private class HybridCanvas(
         // Unlike JavascriptInterface, this bridge is restricted to our bundled
         // main-frame origin. Embedded websites cannot read saved invitations.
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
+            WebViewCompat.addWebMessageListener(webView, "TextEntry", setOf("https://appassets.androidplatform.net")) { _, message, _, isMainFrame, reply ->
+                if (isMainFrame) {
+                    var requestId = -1
+                    try {
+                        val request = JSONObject(message.data ?: "{}")
+                        requestId = request.getInt("id")
+                        check(handwritingDialog == null) { "Text entry is already open" }
+                        val id = requestId
+                        handwritingDialog = HandwritingDialog(activity, request.optString("text").take(20000), request.optBoolean("dark"), request.optJSONArray("strokes")) { text ->
+                            handwritingDialog = null
+                            if (!rendererGone) reply.postMessage(JSONObject().put("id", id).put("text", text ?: JSONObject.NULL).toString())
+                        }.also { it.show() }
+                    } catch (_: Exception) {
+                        reply.postMessage(JSONObject().put("id", requestId).put("error", "Could not open handwriting input.").toString())
+                    }
+                }
+            }
             val recentBoards = RecentBoards(activity)
             WebViewCompat.addWebMessageListener(webView, "RecentBoards", setOf("https://appassets.androidplatform.net")) { _, message, _, isMainFrame, reply ->
                 if (isMainFrame) {
@@ -295,6 +313,7 @@ private class HybridCanvas(
     }
 
     fun destroy() {
+        handwritingDialog?.dismiss()
         boardEpoch += 1
         inkOverlay.cancelUnfinishedStrokes()
         eraserActivation += 1
@@ -362,6 +381,7 @@ private class HybridCanvas(
             strokeWidth: Float,
             pressureSensitivity: Float,
             profile: String,
+            dash: String,
         ) {
             activity.runOnUiThread {
                 inkOverlay.setInkStyle(
@@ -370,6 +390,7 @@ private class HybridCanvas(
                     strokeWidth,
                     pressureSensitivity,
                     profile,
+                    dash,
                 )
             }
         }
@@ -449,6 +470,8 @@ private class StylusInkOverlay(
     private var nativeStrokeWidth = 2f
     private var pressureSensitivity = 0.7f
     private var brushProfile = "pressure"
+    private var inkDash = "draw"
+    private var strokeDash = "draw"
     private var viewport = CanvasViewport()
     private var strokeViewport = CanvasViewport()
     private var strokeColor = brushColor
@@ -498,6 +521,7 @@ private class StylusInkOverlay(
         strokeWidth: Float,
         sensitivity: Float,
         profile: String,
+        dash: String,
     ) {
         val parsedColor = runCatching { color.toColorInt() }.getOrDefault(Color.rgb(27, 27, 31))
         val parsedRenderedColor = runCatching { renderedColor.toColorInt() }
@@ -506,6 +530,7 @@ private class StylusInkOverlay(
         renderedBrushColor = String.format("#%06X", 0xFFFFFF and parsedRenderedColor)
         nativeStrokeWidth = max(0.5f, strokeWidth)
         pressureSensitivity = sensitivity.coerceIn(0f, 1.5f)
+        inkDash = if (dash == "solid") "solid" else "draw"
         brushProfile = if (profile == "monoline") "monoline" else "pressure"
         brush = createBrush(parsedRenderedColor)
     }
@@ -692,6 +717,7 @@ private class StylusInkOverlay(
         strokeWidth = nativeStrokeWidth
         strokePressureSensitivity = pressureSensitivity
         strokeProfile = brushProfile
+        strokeDash = inkDash
         currentPoints.clear()
         strokeStartTimeMillis = event.eventTime
         lastInputX = Float.NaN
@@ -927,6 +953,7 @@ private class StylusInkOverlay(
             .put("strokeWidth", strokeWidth.toDouble())
             .put("pressureSensitivity", strokePressureSensitivity.toDouble())
             .put("profile", strokeProfile)
+            .put("dash", strokeDash)
             .put(
                 "viewport",
                 JSONObject()

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — 2026-09-14
+
+- Add Write text with a native S Pen handwriting area, English/Spanish recognition, and editable review text.
+- Download ML Kit language models on demand; recognize on-device after download.
+- Append converted lines and insert them as editable tldraw text with undo support.
+- Add Lasso text to convert fully enclosed handwritten strokes, with review, cancellation, Undo, and protection against concurrent edits.
+- Assign separate tools to Pen and Touch from the bottom toolbar.
+- Match the solid native preview to constant-width ink; retain the captured stroke style at handoff and use tldraw rendering for dashed/dotted patterns.
+- Validate real model recognition and the native bridge on the Samsung tablet, plus insertion behavior in the browser sandbox.
+
 ## 0.3.1 — 2026-09-13
 
 - Translate all app-owned interface text, accessibility labels, errors, and verification messages to English.

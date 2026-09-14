@@ -1,16 +1,17 @@
+import { inputTools } from './input-tools'
 import { sampleForHandoff } from './stroke-sampling'
-import { compressLegacySegments, createShapeId, DefaultColorStyle, DefaultSizeStyle, getColorValue, react, type Editor, type TLDefaultColorStyle } from 'tldraw'
+import { compressLegacySegments, createShapeId, DefaultColorStyle, DefaultSizeStyle, DefaultDashStyle, getColorValue, react, type Editor, type TLDefaultColorStyle } from 'tldraw'
 
 type NativeInk = {
  resetBoard(): void
  setInkEnabled(enabled: boolean): void
- setInkStyle(color: string, rendered: string, width: number, pressure: number, profile: string): void
+ setInkStyle(color: string, rendered: string, width: number, pressure: number, profile: string, dash: string): void
  setViewport(zoom: number, x: number, y: number, left: number, top: number): void
  setHitRegions(json: string): void
  strokeCommitted(token: string): void
  reportWebReady(): void
 }
-type Payload = {token: string; viewWidth: number; viewHeight: number; color: string; strokeWidth: number; viewport: {zoom: number; scrollX: number; scrollY: number; offsetLeft: number; offsetTop: number}; points: {x: number; y: number; pressure: number}[]}
+type Payload = {dash?: 'draw' | 'solid'; token: string; viewWidth: number; viewHeight: number; color: string; strokeWidth: number; viewport: {zoom: number; scrollX: number; scrollY: number; offsetLeft: number; offsetTop: number}; points: {x: number; y: number; pressure: number}[]}
 declare global {interface Window {
  AndroidInk?: NativeInk
  hybridInkCommit?: (json: string) => boolean
@@ -22,8 +23,9 @@ export function attachInk(editor: Editor) {
  const native = window.AndroidInk
  if (!native) return () => {}
  const stop = react('Android Ink style and camera', () => {
-  const tool = editor.getCurrentToolId()
-  native.setInkEnabled(tool === 'draw' && !editor.getInstanceState().isReadonly)
+  const tool = inputTools(editor).get().pen.tool
+  const dash = editor.getStyleForNextShape(DefaultDashStyle)
+  native.setInkEnabled(tool === 'draw' && (dash === 'draw' || dash === 'solid') && !editor.getInstanceState().isReadonly)
   const camera = editor.getCamera(), bounds = editor.getViewportScreenBounds()
   native.setViewport(camera.z, camera.x, camera.y, bounds.x, bounds.y)
   const theme = editor.getCurrentTheme()
@@ -31,7 +33,7 @@ export function attachInk(editor: Editor) {
   const size = editor.getStyleForNextShape(DefaultSizeStyle)
   const baseWidth = theme.strokeWidth * sizes[size]
   const forceSolid = camera.z < 0.5 && camera.z < 1.5 / (baseWidth + 1)
-  native.setInkStyle(color, color, baseWidth, 1, forceSolid ? 'monoline' : 'pressure')
+  native.setInkStyle(color, color, baseWidth, 1, forceSolid || dash === 'solid' ? 'monoline' : 'pressure', dash)
  })
  function hitRegions() {
   const selectors = '[data-ink-block],.tlui-share-zone,.tlui-toolbar,.tlui-style-panel,.tlui-navigation-panel,.tlui-help-menu,[role="dialog"],[role="menu"],.tlui-popover,.tlui-layout button,.tlui-layout input,.tlui-layout [role="button"]'
@@ -57,7 +59,7 @@ export function attachInk(editor: Editor) {
     const colors = editor.getCurrentTheme().colors[editor.getColorMode()]
     const color = (Object.keys(colors).find(key => getColorValue(colors, key, 'solid').toLowerCase() === p.color.toLowerCase()) || 'black') as TLDefaultColorStyle
     editor.markHistoryStoppingPoint('S Pen stroke')
-    editor.createShape({id, type:'draw', x:origin.x, y:origin.y, props:{color, size, isPen:true, isComplete:true, segments:compressLegacySegments([{type:'free',points:sampleForHandoff(pagePoints, devicePixelRatio * v.zoom).map(q=>({x:q.x-origin.x,y:q.y-origin.y,z:q.z}))}])}})
+    editor.createShape({id, type:'draw', x:origin.x, y:origin.y, props:{color, size, dash:p.dash || 'draw', isPen:true, isComplete:true, segments:compressLegacySegments([{type:'free',points:sampleForHandoff(pagePoints, devicePixelRatio * v.zoom).map(q=>({x:q.x-origin.x,y:q.y-origin.y,z:q.z}))}])}})
    }
    requestAnimationFrame(() => requestAnimationFrame(() => native.strokeCommitted(p.token)))
    return true

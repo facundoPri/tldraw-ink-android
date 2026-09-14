@@ -1,3 +1,5 @@
+import {InkTextLasso, LassoNotice} from './ink-text-lasso'
+import {InputToolbar, inputOverrides, lassoIcon} from './input-tools'
 // Development-only design sandbox. Vite's production entry is index.html.
 // Uses a fresh in-memory store: no Share connection, invitation, or real document.
 import {createRoot} from 'react-dom/client'
@@ -7,6 +9,10 @@ import {BoardContext, boardComponents} from './board-controls'
 import 'tldraw/tldraw.css'
 import './style.css'
 
+const canvasComponents={...boardComponents,Toolbar:InputToolbar,InFrontOfTheCanvas:LassoNotice}
+const canvasTools=[InkTextLasso]
+const demoAssets=getAssetUrlsByImport()
+Object.assign(demoAssets.icons, {'ink-text-lasso':lassoIcon})
 function populate(editor: Editor) {
  window.editor = editor
  editor.user.updateUserPreferences({colorScheme: 'light', locale: 'en'})
@@ -23,6 +29,6 @@ function populate(editor: Editor) {
 }
 createRoot(document.getElementById('root')!).render(
  <BoardContext.Provider value={{name:'A fresh page',status:'Local demo',openBoards:()=>location.assign('/')}}>
-  <main className="canvas"><Tldraw assetUrls={getAssetUrlsByImport()} components={boardComponents} onMount={populate}/></main>
+  <main className="canvas"><Tldraw assetUrls={demoAssets} components={canvasComponents} tools={canvasTools} overrides={inputOverrides} onMount={populate}/></main>
  </BoardContext.Provider>
 )

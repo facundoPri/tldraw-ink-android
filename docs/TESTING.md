@@ -75,3 +75,26 @@ The reconnect probe changes only the WebView's network emulation, restores it, a
 Prior development builds were checked on a Samsung SM-X730 running Android 16 with tldraw offline 1.18.0. Native pressure, landscape left-edge capture, two-way CRUD, PNG assets, and in-process reconnection passed. A controlled small-curve handoff measured pixel IoU of 0.928 after resampling, versus 0.780 before. These are specific synthetic test results, not guarantees for all handwriting.
 
 The 0.3.0 redesign adds browser layout/interaction verification and Android build validation. Physical tablet review of the updated icon and styling remains necessary when a device is connected. A signed production APK also needs its own device smoke test and license validation.
+
+## Handwriting to text
+
+`HandwritingTest` uses the actual packaged-page bridge, a native handwriting dialog, injected S Pen strokes spelling HOLA, and the real ML Kit recognizer. It checks recognition, review edits, the returned text, and cancel. It does not connect to or mutate a board. A first run downloads the selected language model.
+
+```sh
+adb shell am instrument -w -e language en \
+  -e class com.facundopri.tldrawink.HandwritingTest \
+  com.facundopri.tldrawink.test/androidx.test.runner.AndroidJUnitRunner
+adb shell am instrument -w -e language es \
+  -e class com.facundopri.tldrawink.HandwritingTest \
+  com.facundopri.tldrawink.test/androidx.test.runner.AndroidJUnitRunner
+node scripts/verify-text-entry.mjs
+```
+
+The browser test uses a simulated native reply in the in-memory design sandbox to check editable text insertion, literal text handling, undo, cancel, and read-only mode. The device test exercises actual recognition independently. Both English and Spanish recognized the injected HOLA sample on the Samsung SM-X730; this is not a handwriting-accuracy benchmark or a claim that every user's writing will be recognized perfectly.
+
+
+### Lasso and input tools
+
+With the design sandbox running on port 5179, run `node scripts/verify-lasso-tools.mjs`. It checks lasso enclosure, cancellation, atomic replacement, Undo, concurrent editing, and separate touch/pen tool routing using browser input events.
+
+`HandwritingTest` also recognizes selected stroke data through the native bridge and confirms replacement text. `PenPreviewTest` measures native preview widths before pen-up using injected low/high-pressure samples. On the Samsung SM-X730 the solid sample measured 12/12 pixels and the pressure sample 10/28 pixels. These are synthetic checks, not physical pen latency or simultaneous palm/pen validation.

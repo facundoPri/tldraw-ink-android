@@ -1,3 +1,5 @@
+import {InkTextLasso, LassoNotice} from './ink-text-lasso'
+import {InputToolbar, inputOverrides, lassoIcon} from './input-tools'
 import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Tldraw, defaultShapeUtils, defaultBindingUtils, type Editor, type TLAssetStore } from 'tldraw'
@@ -11,7 +13,10 @@ import appIcon from './icon.svg'
 import { attachInk } from './ink'
 import { loadHistory, saveHistory, sameBoard, type RecentBoard } from './history'
 
+const canvasComponents={...boardComponents,Toolbar:InputToolbar,InFrontOfTheCanvas:LassoNotice}
+const canvasTools=[InkTextLasso]
 const assetUrls = getAssetUrlsByImport()
+Object.assign(assetUrls.icons, {'ink-text-lasso':lassoIcon})
 type Connection = { origin: string; board: string; token: string; metadata: any }
 declare global { interface Window { editor?: Editor } }
 function parseShare(value: string) {
@@ -41,7 +46,7 @@ function Board({connection, close}: {connection: Connection; close: () => void})
  const store = useSync({uri: `${connection.origin}/connect/${encodeURIComponent(connection.board)}?token=${encodeURIComponent(connection.token)}`,assets, shapeUtils: defaultShapeUtils, bindingUtils: defaultBindingUtils, records})
  const mount = useCallback((editor: Editor) => {window.editor = editor; editor.user.updateUserPreferences({locale: 'en'}); editor.zoomToFit(); const detach = attachInk(editor); return () => {detach(); delete window.editor}}, [])
  const status = store.status === 'synced-remote' ? store.connectionStatus === 'online' ? 'Connected' : 'Reconnecting… · keep the app open' : store.status === 'error' ? 'Could not sync. Check Share and your network.' : 'Connecting…'
- return <BoardContext.Provider value={{name: connection.metadata.displayName || 'Board', status, openBoards: close}}><main className="canvas" data-board={connection.board}><Tldraw licenseKey={import.meta.env.VITE_TLDRAW_LICENSE_KEY} store={store} assetUrls={assetUrls} components={boardComponents} onMount={mount}/></main></BoardContext.Provider>
+ return <BoardContext.Provider value={{name: connection.metadata.displayName || 'Board', status, openBoards: close}}><main className="canvas" data-board={connection.board}><Tldraw licenseKey={import.meta.env.VITE_TLDRAW_LICENSE_KEY} store={store} assetUrls={assetUrls} components={canvasComponents} tools={canvasTools} overrides={inputOverrides} onMount={mount}/></main></BoardContext.Provider>
 }
 function App() {
  const [connection, setConnection] = useState<Connection | null>(null)

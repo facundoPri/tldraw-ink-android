@@ -2,7 +2,7 @@
 
 ## Development prerelease
 
-Version 0.3.1 is published as a GitHub prerelease with `ink-share-0.3.1-dev.apk`, `SHA256SUMS`, and `build-info.json`. It is the debug APK built from the tagged main commit, with the SDK in development mode and no SDK key. Android/WebView debugging is enabled. The artifact is for development testing; its prerelease label does not change the SDK license terms.
+Version 0.4.0 is published as a GitHub prerelease with `ink-share-0.4.0-dev.apk`, `SHA256SUMS`, and `build-info.json`. It is the debug APK built from the tagged main commit, with the SDK in development mode and no SDK key. Android/WebView debugging is enabled. The artifact is for development testing; its prerelease label does not change the SDK license terms.
 
 To reproduce it, check out the release tag, install the locked web dependencies with `npm ci --prefix web`, and run `./scripts/build.sh debug`. The output is `android/app/build/outputs/apk/debug/app-debug.apk`. A locally generated debug certificate will differ from the published artifact's certificate; Android will not accept it as an update to that installation unless the signing identity matches.
 

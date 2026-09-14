@@ -1,0 +1,8 @@
+<resources>
+    <style name="InkShareHandwritingLight" parent="android:style/Theme.Material.Light.Dialog.Alert">
+        <item name="android:colorAccent">#2F80ED</item>
+    </style>
+    <style name="InkShareHandwritingDark" parent="android:style/Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">#579BF5</item>
+    </style>
+</resources>
